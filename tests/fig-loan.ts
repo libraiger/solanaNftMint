@@ -22,6 +22,7 @@ describe('fig-loan', () => {
   const user2 = Keypair.generate();
   let videoUrl = undefined;
   let metadata = undefined;
+  let wallet;
 
   (async () => {
 
@@ -39,24 +40,25 @@ describe('fig-loan', () => {
       console.log(i+"th Loop");
       const fileData = fs.readFileSync(`./metadata/${i}.png`);
       
-      const wallet = await arweave.wallets.generate();
       const transaction = await arweave.createTransaction({
           data: fileData
-      }, wallet);
+      });
       
       transaction.addTag('Content-Type', 'image/png');
+      if(!wallet) wallet = await arweave.wallets.generate();
       
       await arweave.transactions.sign(transaction, wallet);
+      console.log(transaction);
       
-      const uploader = await arweave.transactions.getUploader(transaction);
-      
+      const uploader = await arweave.transactions.post(transaction);
+      /*
       while (!uploader.isComplete) {
         await uploader.uploadChunk();
         console.log(
           `${uploader.pctComplete}% complete, ${uploader.uploadedChunks}/${uploader.totalChunks}`
         );
       }
-
+      */
       const { id } = transaction;
       videoUrl = id ? `https://arweave.net/${id}` : undefined;
       console.log(videoUrl);
