@@ -1,11 +1,5 @@
 # loanos30-frontend
 
-## Introduction
-
-
-### Run Solana Validator
-
-
 ### Install
 ```bash
 yarn install
